@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 
 const MAX_PHASES = 8;
 
@@ -10,6 +10,20 @@ const CATEGORY_OPTIONS = [
   { id: "ship", label: "Ship" },
   { id: "coordinate", label: "Coordinate" },
 ];
+
+const DARK_THEME = {
+  "--accent": "#3B82F6", "--green": "#22C55E", "--red": "#EF4444", "--amber": "#F59E0B",
+  "--text-primary": "#E2E8F0", "--text-secondary": "#94A3B8", "--text-tertiary": "#64748B",
+  "--surface-0": "#0F172A", "--surface-1": "#1E293B", "--surface-2": "#334155",
+  "--border": "#334155", "--overlay": "rgba(0,0,0,0.6)",
+};
+
+const LIGHT_THEME = {
+  "--accent": "#3B82F6", "--green": "#16A34A", "--red": "#DC2626", "--amber": "#D97706",
+  "--text-primary": "#0F172A", "--text-secondary": "#475569", "--text-tertiary": "#94A3B8",
+  "--surface-0": "#FFFFFF", "--surface-1": "#F1F5F9", "--surface-2": "#E2E8F0",
+  "--border": "#CBD5E1", "--overlay": "rgba(0,0,0,0.3)",
+};
 
 const DEFAULT_PHASES = [
   {
@@ -261,7 +275,7 @@ function AddPhaseModal({ onAdd, onClose }) {
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}>
+    <div style={{ position: "fixed", inset: 0, background: "var(--overlay)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}>
       <div style={{ background: "var(--surface-1)", borderRadius: 14, padding: "24px 28px", maxWidth: 520, width: "100%", maxHeight: "85vh", overflowY: "auto", border: "1px solid var(--border)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0, fontFamily: "var(--font-display)" }}>Add Custom Phase</h3>
@@ -367,6 +381,11 @@ export default function AITimelineFramework() {
   const [expandedPhase, setExpandedPhase] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(null);
+  const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    document.body.style.background = darkMode ? DARK_THEME["--surface-0"] : LIGHT_THEME["--surface-0"];
+  }, [darkMode]);
 
   const totalPct = useMemo(() => phases.reduce((s, p) => s + p.defaultPct, 0), [phases]);
   const pctWarning = totalPct !== 100;
@@ -441,9 +460,7 @@ export default function AITimelineFramework() {
 
   return (
     <div style={{
-      "--accent": "#3B82F6", "--green": "#22C55E", "--red": "#EF4444", "--amber": "#F59E0B",
-      "--text-primary": "#E2E8F0", "--text-secondary": "#94A3B8", "--text-tertiary": "#64748B",
-      "--surface-0": "#0F172A", "--surface-1": "#1E293B", "--surface-2": "#334155", "--border": "#334155",
+      ...(darkMode ? DARK_THEME : LIGHT_THEME),
       "--font-display": "'DM Sans', 'Segoe UI', system-ui, sans-serif",
       "--font-body": "'DM Sans', 'Segoe UI', system-ui, sans-serif",
       "--font-mono": "'JetBrains Mono', 'SF Mono', 'Fira Code', monospace",
@@ -455,7 +472,7 @@ export default function AITimelineFramework() {
       {showAddModal && <AddPhaseModal onAdd={addPhase} onClose={() => setShowAddModal(false)} />}
 
       {confirmRemove && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "var(--overlay)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}>
           <div style={{ background: "var(--surface-1)", borderRadius: 12, padding: "24px 28px", maxWidth: 380, width: "100%", border: "1px solid var(--border)" }}>
             <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, fontFamily: "var(--font-display)" }}>Remove Phase?</h4>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 18px", lineHeight: 1.5 }}>
@@ -471,12 +488,24 @@ export default function AITimelineFramework() {
 
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Header */}
-        <div style={{ marginBottom: 28 }}>
+        <div style={{ position: "relative", marginBottom: 28 }}>
           <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--accent)", letterSpacing: 2, textTransform: "uppercase", fontWeight: 600, marginBottom: 6 }}>Project Management Framework</div>
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, fontFamily: "var(--font-display)", lineHeight: 1.2, letterSpacing: -0.5 }}>AI-Era Timeline Estimation</h1>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "8px 0 0", lineHeight: 1.6, maxWidth: 620 }}>
             Coding 10x faster ≠ shipping 10x faster. Model every phase of your actual dev cycle and see where AI truly moves the needle.
           </p>
+          <button
+            onClick={() => setDarkMode(d => !d)}
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            style={{
+              position: "absolute", top: 0, right: 0,
+              background: "none", border: "none",
+              fontSize: 20, cursor: "pointer",
+              lineHeight: 1, padding: 0,
+            }}
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
         </div>
 
         {/* Tabs */}
