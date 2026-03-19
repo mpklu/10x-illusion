@@ -4,7 +4,7 @@
 
 An interactive framework for project managers and tech leads to estimate realistic project timelines in the AI era. Based on the insight that Amdahl's Law applies to software development cycles — even infinite speedup on coding alone is bounded by the phases AI can't accelerate.
 
-![Framework Preview](./docs/preview.png)
+![Framework Preview](./public/preview.png)
 
 ## The Problem
 
@@ -55,7 +55,7 @@ Add, remove, and configure up to 8 development phases to match your actual workf
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/10x-illusion.git
+git clone https://github.com/mpklu/10x-illusion.git
 cd 10x-illusion
 
 # Install dependencies
