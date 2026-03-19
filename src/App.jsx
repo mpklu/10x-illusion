@@ -160,9 +160,10 @@ function SliderControl({ phase, value, onChange }) {
   );
 }
 
-function PhaseBar({ phase, originalDays, aiDays, totalOriginal, totalAi }) {
-  const origPct = (originalDays / totalOriginal) * 100;
-  const aiPct = (aiDays / totalAi) * 100;
+function PhaseBar({ phase, originalDays, aiDays, totalOriginal }) {
+  const maxDays = totalOriginal;
+  const origPct = (originalDays / maxDays) * 100;
+  const aiPct = (aiDays / maxDays) * 100;
   const isExpanded = aiDays > originalDays;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
@@ -734,7 +735,7 @@ export default function AITimelineFramework() {
                 </div>
               </div>
               {calculations.phases.map(p => (
-                <PhaseBar key={p.id} phase={p} originalDays={p.originalDays} aiDays={p.aiDays} totalOriginal={calculations.totalOriginal} totalAi={calculations.totalAi} />
+                <PhaseBar key={p.id} phase={p} originalDays={p.originalDays} aiDays={p.aiDays} totalOriginal={calculations.totalOriginal} />
               ))}
             </div>
 
