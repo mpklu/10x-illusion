@@ -34,7 +34,7 @@ Speedup = 1 / [0.70 + 0.30/10] = 1 / 0.73 = 1.37x
 ## What This Tool Does
 
 ### 🧮 Timeline Estimator
-Plug in your baseline estimate, adjust per-phase AI multipliers, and see the realistic project timeline. Switch between Conservative, Moderate, and Aggressive presets to present stakeholders with a range.
+Plug in your baseline estimate, choose an AI adoption preset and spec quality level, then adjust per-phase AI multipliers. The **Spec Quality dial** (Poor / Good / Excellent) models how specification clarity affects downstream phases — poor specs can cut effective AI gains nearly in half, while excellent specs let AI reach its full potential. Switch between presets to present stakeholders with a range.
 
 ### 🔍 Factor Deep-Dive
 Explore each phase's AI impact, human bottleneck, and new risks introduced by AI tooling. Understand *why* each multiplier is what it is.
@@ -77,7 +77,7 @@ Open [http://localhost:5173](http://localhost:5173) to see the framework.
 
 1. **Decompose before you multiply** — Apply AI multipliers per-phase, not as a blanket factor.
 2. **Account for expanding phases** — More AI code → more review, more testing. Some phases get longer.
-3. **Specification becomes the bottleneck** — AI is fast but literal. Poor specs produce fast garbage.
+3. **Specification becomes the bottleneck** — AI is fast but literal. Poor specs produce fast garbage. Use the Spec Quality dial to model this.
 4. **Plan for the review funnel** — Senior devs can't review faster just because AI writes faster.
 5. **Use ranges, not points** — Always present conservative/moderate/aggressive scenarios.
 

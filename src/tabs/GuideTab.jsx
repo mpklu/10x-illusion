@@ -59,6 +59,9 @@ export default function GuideTab({ setTab }) {
         <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: "0 0 14px" }}>
           When AI writes code faster, it produces <em>more</em> code. That code still needs to be reviewed by your senior developers, tested by QA, and validated against requirements. These downstream phases can actually take <em>longer</em> than before.
         </p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: "0 0 14px" }}>
+          <strong style={{ color: "var(--text-primary)" }}>Specification quality is a force multiplier.</strong> Poor specs + 10x coding speed = 10x the wrong thing. The Estimator's Spec Quality dial lets you model this — watch how "Poor" specs can cut your effective AI gains nearly in half.
+        </p>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {[
             { emoji: "⚡", label: "Faster with AI", items: "Writing code, generating tests, creating boilerplate, drafting documentation", color: "var(--green)" },
@@ -77,7 +80,7 @@ export default function GuideTab({ setTab }) {
         <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 14px", fontFamily: "var(--font-display)" }}>How to use this tool</h3>
         <div style={{ display: "grid", gap: 12 }}>
           {[
-            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in how long a project would take without AI, adjust how much AI helps each phase, and see the realistic new timeline. Try all three presets (Conservative, Moderate, Aggressive) to give stakeholders a range instead of a single guess." },
+            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in your baseline, choose an AI adoption preset and spec quality level, then adjust per-phase multipliers. Poor specs can negate AI gains; excellent specs amplify them. Try different combinations to give stakeholders a realistic range." },
             { tab: "Factor Deep-Dive", icon: "🔍", desc: "Explore each phase of the development cycle — how AI helps, what humans still need to do, and what new risks AI introduces. This is where you build informed judgment." },
             { tab: "New Dev Cycles", icon: "♻️", desc: "Traditional Agile/Scrum was built for human-speed work. Explore three new development models designed around AI's strengths." },
             { tab: "The Framework", icon: "📐", desc: "The math and principles behind the tool. Includes the formula, five estimation rules, and a matrix showing how team roles are changing." },

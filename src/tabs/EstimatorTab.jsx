@@ -1,18 +1,19 @@
-import { PRESETS, SPEC_QUALITY_LEVELS, SPEC_AFFECTED_PHASES } from "../data/presets";
+import { PRESETS, SPEC_QUALITY_LEVELS } from "../data/presets";
 import SliderControl from "../components/SliderControl";
 import PhaseBar from "../components/PhaseBar";
+import SegmentedControl from "../components/SegmentedControl";
 
-const SPEC_COLORS = { poor: "var(--red)", good: "var(--surface-2)", excellent: "var(--green)" };
-const SPEC_ACTIVE_TEXT = { poor: "#fff", good: "var(--text-primary)", excellent: "#fff" };
+const PRESET_OPTIONS = Object.entries(PRESETS).map(([key, val]) => ({ key, label: val.label, desc: val.desc }));
+const SPEC_OPTIONS = Object.entries(SPEC_QUALITY_LEVELS).map(([key, val]) => ({ key, label: val.label, desc: val.desc }));
+const SPEC_ACCENT = (v) => v === "poor" ? "var(--red)" : v === "excellent" ? "var(--green)" : "var(--accent)";
 
-export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, setShowAddModal, specQuality, setSpecQuality }) {
-  // Build a lookup from calculations.phases for spec annotations
+export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, specQuality, setSpecQuality }) {
   const calcByPhaseId = {};
   calculations.phases.forEach(cp => { calcByPhaseId[cp.id] = cp; });
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "160px 1fr 1fr", gap: 16, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr 1fr", gap: 16, marginBottom: 24, alignItems: "start" }}>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Baseline (days)</label>
           <input type="number" value={baselineDays} onChange={(e) => setBaselineDays(Math.max(1, Number(e.target.value)))} style={{
@@ -23,35 +24,11 @@ export default function EstimatorTab({ baselineDays, setBaselineDays, preset, ap
         </div>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>AI Adoption Preset</label>
-          <div style={{ display: "flex", gap: 6 }}>
-            {Object.entries(PRESETS).map(([key, val]) => (
-              <button key={key} onClick={() => applyPreset(key)} style={{
-                flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)",
-                background: preset === key ? "var(--accent)" : "var(--surface-1)",
-                color: preset === key ? "#fff" : "var(--text-secondary)",
-                border: preset === key ? "none" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer", transition: "all 0.2s",
-              }}>
-                <div>{val.label}</div>
-                <div style={{ fontSize: 10, fontWeight: 400, opacity: 0.7, marginTop: 2 }}>{val.desc}</div>
-              </button>
-            ))}
-          </div>
+          <SegmentedControl options={PRESET_OPTIONS} value={preset} onChange={applyPreset} />
         </div>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Spec Quality</label>
-          <div style={{ display: "flex", gap: 6 }}>
-            {Object.entries(SPEC_QUALITY_LEVELS).map(([key, val]) => (
-              <button key={key} onClick={() => setSpecQuality(key)} style={{
-                flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)",
-                background: specQuality === key ? SPEC_COLORS[key] : "var(--surface-1)",
-                color: specQuality === key ? SPEC_ACTIVE_TEXT[key] : "var(--text-secondary)",
-                border: specQuality === key ? "none" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer", transition: "all 0.2s",
-              }}>
-                <div>{val.label}</div>
-                <div style={{ fontSize: 10, fontWeight: 400, opacity: 0.7, marginTop: 2 }}>{val.desc}</div>
-              </button>
-            ))}
-          </div>
+          <SegmentedControl options={SPEC_OPTIONS} value={specQuality} onChange={setSpecQuality} accentColor={SPEC_ACCENT} />
         </div>
       </div>
 

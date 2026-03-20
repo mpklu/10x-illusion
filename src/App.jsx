@@ -195,7 +195,7 @@ export default function AITimelineFramework() {
         )}
 
         {tab === "guide" && <GuideTab setTab={setTab} />}
-        {tab === "estimator" && <EstimatorTab baselineDays={baselineDays} setBaselineDays={setBaselineDays} preset={preset} applyPreset={applyPreset} calculations={calculations} phases={phases} multipliers={multipliers} updateMultiplier={updateMultiplier} setConfirmRemove={setConfirmRemove} setShowAddModal={setShowAddModal} specQuality={specQuality} setSpecQuality={setSpecQuality} />}
+        {tab === "estimator" && <EstimatorTab baselineDays={baselineDays} setBaselineDays={setBaselineDays} preset={preset} applyPreset={applyPreset} calculations={calculations} phases={phases} multipliers={multipliers} updateMultiplier={updateMultiplier} setConfirmRemove={setConfirmRemove} specQuality={specQuality} setSpecQuality={setSpecQuality} />}
         {tab === "factors" && <FactorsTab phases={phases} multipliers={multipliers} expandedPhase={expandedPhase} setExpandedPhase={setExpandedPhase} setConfirmRemove={setConfirmRemove} setShowAddModal={setShowAddModal} />}
         {tab === "cycles" && <CyclesTab selectedCycle={selectedCycle} setSelectedCycle={setSelectedCycle} />}
         {tab === "framework" && <FrameworkTab />}
