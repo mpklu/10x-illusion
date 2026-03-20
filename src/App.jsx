@@ -3,6 +3,8 @@ import { DARK_THEME, LIGHT_THEME } from "./data/themes";
 import { DEFAULT_PHASES, MAX_PHASES } from "./data/phases";
 import { PRESET_MULTIPLIERS, SPEC_QUALITY_FACTORS, AI_MATURITY_SCALE } from "./data/presets";
 import AddPhaseModal from "./components/AddPhaseModal";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ReportDocument from "./components/ReportDocument";
 import GuideTab from "./tabs/GuideTab";
 import EstimatorTab from "./tabs/EstimatorTab";
 import FactorsTab from "./tabs/FactorsTab";
@@ -184,6 +186,19 @@ export default function AITimelineFramework() {
               </span>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
+              {tab === "estimator" && (
+                <PDFDownloadLink
+                  document={<ReportDocument calculations={calculations} baselineDays={baselineDays} preset={preset} specQuality={specQuality} aiMaturity={aiMaturity} />}
+                  fileName={`10x-illusion-estimate-${baselineDays}d.pdf`}
+                  style={{
+                    padding: "6px 12px", fontSize: 11, fontWeight: 600, background: "var(--surface-1)", color: "var(--text-tertiary)",
+                    border: "1px solid var(--border)", borderRadius: 6, cursor: "pointer", fontFamily: "var(--font-body)",
+                    textDecoration: "none",
+                  }}
+                >
+                  {({ loading }) => loading ? "Preparing…" : "Export PDF"}
+                </PDFDownloadLink>
+              )}
               <button onClick={resetToDefaults} style={{
                 padding: "6px 12px", fontSize: 11, fontWeight: 600, background: "var(--surface-1)", color: "var(--text-tertiary)",
                 border: "1px solid var(--border)", borderRadius: 6, cursor: "pointer", fontFamily: "var(--font-body)",

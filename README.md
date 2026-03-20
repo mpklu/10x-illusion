@@ -83,7 +83,7 @@ Open [http://localhost:5173](http://localhost:5173) to see the framework.
 
 ## Roadmap
 
-- [ ] Export estimates as PDF/CSV for stakeholder presentations
+- [x] Export estimates as PDF for stakeholder presentations
 - [ ] Sprint retrospective mode — input actuals, auto-calibrate multipliers
 - [ ] Team AI maturity assessment questionnaire
 - [ ] Integration with project management tools (Jira, Linear, etc.)

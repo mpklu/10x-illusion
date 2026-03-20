@@ -96,7 +96,7 @@ export default function GuideTab({ setTab }) {
         <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 14px", fontFamily: "var(--font-display)" }}>How to use this tool</h3>
         <div style={{ display: "grid", gap: 12 }}>
           {[
-            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in your baseline, choose an AI adoption preset, spec quality level, and team maturity sprint. Poor specs negate AI gains; early sprints pull multipliers toward 1x. Try different combinations to give stakeholders a realistic range." },
+            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in your baseline, choose an AI adoption preset, spec quality level, and team maturity sprint. Poor specs negate AI gains; early sprints pull multipliers toward 1x. Export your estimate as a polished PDF for stakeholder presentations." },
             { tab: "Factor Deep-Dive", icon: "🔍", desc: "Explore each phase of the development cycle — how AI helps, what humans still need to do, and what new risks AI introduces. This is where you build informed judgment." },
             { tab: "New Dev Cycles", icon: "♻️", desc: "Traditional Agile/Scrum was built for human-speed work. Explore three new development models designed around AI's strengths." },
             { tab: "The Framework", icon: "📐", desc: "The math and principles behind the tool. Includes the formula, five estimation rules, and a matrix showing how team roles are changing." },
