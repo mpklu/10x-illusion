@@ -1,28 +1,51 @@
-import { PRESETS } from "../data/presets";
+import { PRESETS, SPEC_QUALITY_LEVELS, SPEC_AFFECTED_PHASES } from "../data/presets";
 import SliderControl from "../components/SliderControl";
 import PhaseBar from "../components/PhaseBar";
 
-export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, setShowAddModal }) {
+const SPEC_COLORS = { poor: "var(--red)", good: "var(--surface-2)", excellent: "var(--green)" };
+const SPEC_ACTIVE_TEXT = { poor: "#fff", good: "var(--text-primary)", excellent: "#fff" };
+
+export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, setShowAddModal, specQuality, setSpecQuality }) {
+  // Build a lookup from calculations.phases for spec annotations
+  const calcByPhaseId = {};
+  calculations.phases.forEach(cp => { calcByPhaseId[cp.id] = cp; });
+
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: 20, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "160px 1fr 1fr", gap: 16, marginBottom: 24 }}>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Baseline (days)</label>
           <input type="number" value={baselineDays} onChange={(e) => setBaselineDays(Math.max(1, Number(e.target.value)))} style={{
             width: "100%", padding: "10px 12px", fontSize: 20, fontWeight: 700, background: "var(--surface-1)",
             border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-primary)", fontFamily: "var(--font-mono)", boxSizing: "border-box",
           }} />
-          <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 4 }}>Pre-AI estimate for the full project</div>
+          <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 4 }}>Pre-AI estimate</div>
         </div>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>AI Adoption Preset</label>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 6 }}>
             {Object.entries(PRESETS).map(([key, val]) => (
               <button key={key} onClick={() => applyPreset(key)} style={{
-                flex: 1, padding: "10px 12px", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)",
+                flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)",
                 background: preset === key ? "var(--accent)" : "var(--surface-1)",
                 color: preset === key ? "#fff" : "var(--text-secondary)",
                 border: preset === key ? "none" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer", transition: "all 0.2s",
+              }}>
+                <div>{val.label}</div>
+                <div style={{ fontSize: 10, fontWeight: 400, opacity: 0.7, marginTop: 2 }}>{val.desc}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Spec Quality</label>
+          <div style={{ display: "flex", gap: 6 }}>
+            {Object.entries(SPEC_QUALITY_LEVELS).map(([key, val]) => (
+              <button key={key} onClick={() => setSpecQuality(key)} style={{
+                flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)",
+                background: specQuality === key ? SPEC_COLORS[key] : "var(--surface-1)",
+                color: specQuality === key ? SPEC_ACTIVE_TEXT[key] : "var(--text-secondary)",
+                border: specQuality === key ? "none" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer", transition: "all 0.2s",
               }}>
                 <div>{val.label}</div>
                 <div style={{ fontSize: 10, fontWeight: 400, opacity: 0.7, marginTop: 2 }}>{val.desc}</div>
@@ -67,25 +90,37 @@ export default function EstimatorTab({ baselineDays, setBaselineDays, preset, ap
           Below 1.0 = phase gets longer. Use × to remove phases, or "Add Phase" above to customize your cycle.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 24px" }}>
-          {phases.map(p => (
-            <div key={p.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {p.icon} {p.name}
-                  <span style={{ fontSize: 11, fontWeight: 400, color: "var(--text-tertiary)", marginLeft: 6 }}>({p.defaultPct}%)</span>
-                  {!p.isDefault && <span style={{ fontSize: 9, fontWeight: 600, color: "var(--accent)", marginLeft: 5, background: "rgba(59,130,246,0.12)", padding: "1px 5px", borderRadius: 3 }}>CUSTOM</span>}
+          {phases.map(p => {
+            const cp = calcByPhaseId[p.id];
+            const hasModifier = cp && cp.phaseFactor !== 1.0;
+            return (
+              <div key={p.id}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {p.icon} {p.name}
+                    <span style={{ fontSize: 11, fontWeight: 400, color: "var(--text-tertiary)", marginLeft: 6 }}>({p.defaultPct}%)</span>
+                    {!p.isDefault && <span style={{ fontSize: 9, fontWeight: 600, color: "var(--accent)", marginLeft: 5, background: "rgba(59,130,246,0.12)", padding: "1px 5px", borderRadius: 3 }}>CUSTOM</span>}
+                  </div>
+                  {phases.length > 1 && (
+                    <button onClick={() => setConfirmRemove(p.id)} title="Remove phase" style={{
+                      background: "none", border: "none", color: "var(--text-tertiary)", fontSize: 14, cursor: "pointer",
+                      padding: "2px 6px", borderRadius: 4, lineHeight: 1, opacity: 0.4, transition: "opacity 0.15s", flexShrink: 0,
+                    }} onMouseEnter={e => { e.target.style.opacity = 1; e.target.style.color = "var(--red)"; }}
+                       onMouseLeave={e => { e.target.style.opacity = 0.4; e.target.style.color = "var(--text-tertiary)"; }}>×</button>
+                  )}
                 </div>
-                {phases.length > 1 && (
-                  <button onClick={() => setConfirmRemove(p.id)} title="Remove phase" style={{
-                    background: "none", border: "none", color: "var(--text-tertiary)", fontSize: 14, cursor: "pointer",
-                    padding: "2px 6px", borderRadius: 4, lineHeight: 1, opacity: 0.4, transition: "opacity 0.15s", flexShrink: 0,
-                  }} onMouseEnter={e => { e.target.style.opacity = 1; e.target.style.color = "var(--red)"; }}
-                     onMouseLeave={e => { e.target.style.opacity = 0.4; e.target.style.color = "var(--text-tertiary)"; }}>×</button>
+                <SliderControl phase={p} value={multipliers[p.id] || p.aiDefault} onChange={(v) => updateMultiplier(p.id, v)} />
+                {hasModifier && (
+                  <div style={{
+                    fontSize: 10, fontFamily: "var(--font-mono)", marginTop: 2,
+                    color: cp.phaseFactor < 1 ? "var(--red)" : "var(--green)",
+                  }}>
+                    spec {cp.phaseFactor < 1 ? "" : "+"}{((cp.phaseFactor - 1) * 100).toFixed(0)}% → effective {cp.effectiveMultiplier.toFixed(1)}x
+                  </div>
                 )}
               </div>
-              <SliderControl phase={p} value={multipliers[p.id] || p.aiDefault} onChange={(v) => updateMultiplier(p.id, v)} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

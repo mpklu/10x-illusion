@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { DARK_THEME, LIGHT_THEME } from "./data/themes";
 import { DEFAULT_PHASES, MAX_PHASES } from "./data/phases";
-import { PRESET_MULTIPLIERS } from "./data/presets";
+import { PRESET_MULTIPLIERS, SPEC_QUALITY_FACTORS } from "./data/presets";
 import AddPhaseModal from "./components/AddPhaseModal";
 import GuideTab from "./tabs/GuideTab";
 import EstimatorTab from "./tabs/EstimatorTab";
@@ -22,6 +22,7 @@ export default function AITimelineFramework() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
+  const [specQuality, setSpecQuality] = useState("good");
 
   useEffect(() => {
     document.body.style.background = darkMode ? DARK_THEME["--surface-0"] : LIGHT_THEME["--surface-0"];
@@ -72,13 +73,18 @@ export default function AITimelineFramework() {
     DEFAULT_PHASES.forEach(p => { mults[p.id] = vals[p.id] || p.aiDefault; });
     setMultipliers(mults);
     setPreset("moderate");
+    setSpecQuality("good");
   }, []);
 
   const calculations = useMemo(() => {
+    const specFactors = SPEC_QUALITY_FACTORS[specQuality];
     const computed = phases.map(p => {
+      const rawMultiplier = multipliers[p.id] || p.aiDefault;
+      const phaseFactor = specFactors[p.id] ?? 1.0;
+      const effectiveMultiplier = rawMultiplier * phaseFactor;
       const originalDays = (p.defaultPct / 100) * baselineDays;
-      const aiDays = originalDays / (multipliers[p.id] || p.aiDefault);
-      return { ...p, originalDays, aiDays };
+      const aiDays = originalDays / effectiveMultiplier;
+      return { ...p, originalDays, aiDays, rawMultiplier, effectiveMultiplier, phaseFactor };
     });
     const totalOriginal = computed.reduce((s, p) => s + p.originalDays, 0);
     const totalAi = computed.reduce((s, p) => s + p.aiDays, 0);
@@ -88,7 +94,7 @@ export default function AITimelineFramework() {
     const codingSpeedup = codingPhase ? (multipliers[codingPhase.id] || codingPhase.aiDefault) : 1;
     const bottleneckPhase = computed.length > 0 ? computed.reduce((max, p) => (p.aiDays / totalAi) > (max.aiDays / totalAi) ? p : max) : computed[0];
     return { phases: computed, totalOriginal, totalAi, overallSpeedup, timeSaved, codingSpeedup, bottleneckPhase };
-  }, [baselineDays, multipliers, phases]);
+  }, [baselineDays, multipliers, phases, specQuality]);
 
   const tabs = [
     { id: "guide", label: "Guide" },
@@ -189,7 +195,7 @@ export default function AITimelineFramework() {
         )}
 
         {tab === "guide" && <GuideTab setTab={setTab} />}
-        {tab === "estimator" && <EstimatorTab baselineDays={baselineDays} setBaselineDays={setBaselineDays} preset={preset} applyPreset={applyPreset} calculations={calculations} phases={phases} multipliers={multipliers} updateMultiplier={updateMultiplier} setConfirmRemove={setConfirmRemove} setShowAddModal={setShowAddModal} />}
+        {tab === "estimator" && <EstimatorTab baselineDays={baselineDays} setBaselineDays={setBaselineDays} preset={preset} applyPreset={applyPreset} calculations={calculations} phases={phases} multipliers={multipliers} updateMultiplier={updateMultiplier} setConfirmRemove={setConfirmRemove} setShowAddModal={setShowAddModal} specQuality={specQuality} setSpecQuality={setSpecQuality} />}
         {tab === "factors" && <FactorsTab phases={phases} multipliers={multipliers} expandedPhase={expandedPhase} setExpandedPhase={setExpandedPhase} setConfirmRemove={setConfirmRemove} setShowAddModal={setShowAddModal} />}
         {tab === "cycles" && <CyclesTab selectedCycle={selectedCycle} setSelectedCycle={setSelectedCycle} />}
         {tab === "framework" && <FrameworkTab />}
