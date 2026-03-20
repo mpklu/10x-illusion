@@ -32,3 +32,19 @@ export const SPEC_QUALITY_FACTORS = {
 };
 
 export const SPEC_AFFECTED_PHASES = new Set(["coding", "review", "testing", "bugfix"]);
+
+export const AI_MATURITY_LEVELS = {
+  s1: { label: "Sprint 1", desc: "Learning curve — AI barely nets out" },
+  s2: { label: "Sprint 2", desc: "Early patterns forming, still rough" },
+  s3: { label: "Sprint 3", desc: "Habits solid, ~70% effectiveness" },
+  s4: { label: "Sprint 4", desc: "Near full, minor friction remains" },
+  s5: { label: "Sprint 5+", desc: "Full effectiveness, no ramp penalty" },
+};
+
+export const AI_MATURITY_SCALE = {
+  s1: 0.20,
+  s2: 0.45,
+  s3: 0.70,
+  s4: 0.85,
+  s5: 1.00,
+};

@@ -75,12 +75,28 @@ export default function GuideTab({ setTab }) {
         </div>
       </div>
 
+      {/* The AI Learning Curve */}
+      <div style={{ background: "var(--surface-1)", borderRadius: 10, padding: "24px 28px", marginBottom: 16 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 14px", fontFamily: "var(--font-display)" }}>
+          The AI learning curve — Sprint 1 is not Sprint 5
+        </h3>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: "0 0 14px" }}>
+          Even with the right tools, teams don't hit full AI effectiveness on day one. Sprint 1 often <em>nets out slower</em> — developers are learning prompting patterns, review processes haven't adapted to higher code volume, and nobody yet knows when to trust vs. override the AI.
+        </p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: "0 0 14px" }}>
+          By sprint 3-4, habits solidify: prompting becomes instinctive, teams develop review heuristics for AI-generated code, and trust calibration settles. Sprint 5+ is typically steady-state.
+        </p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+          The Estimator's <strong style={{ color: "var(--text-primary)" }}>AI Maturity Ramp</strong> lets you model which sprint your team is on. Watch how Sprint 1 pulls even aggressive multipliers back toward 1x.
+        </p>
+      </div>
+
       {/* How to use this tool */}
       <div style={{ background: "var(--surface-1)", borderRadius: 10, padding: "24px 28px", marginBottom: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 14px", fontFamily: "var(--font-display)" }}>How to use this tool</h3>
         <div style={{ display: "grid", gap: 12 }}>
           {[
-            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in your baseline, choose an AI adoption preset and spec quality level, then adjust per-phase multipliers. Poor specs can negate AI gains; excellent specs amplify them. Try different combinations to give stakeholders a realistic range." },
+            { tab: "Timeline Estimator", icon: "🧮", desc: "Plug in your baseline, choose an AI adoption preset, spec quality level, and team maturity sprint. Poor specs negate AI gains; early sprints pull multipliers toward 1x. Try different combinations to give stakeholders a realistic range." },
             { tab: "Factor Deep-Dive", icon: "🔍", desc: "Explore each phase of the development cycle — how AI helps, what humans still need to do, and what new risks AI introduces. This is where you build informed judgment." },
             { tab: "New Dev Cycles", icon: "♻️", desc: "Traditional Agile/Scrum was built for human-speed work. Explore three new development models designed around AI's strengths." },
             { tab: "The Framework", icon: "📐", desc: "The math and principles behind the tool. Includes the formula, five estimation rules, and a matrix showing how team roles are changing." },

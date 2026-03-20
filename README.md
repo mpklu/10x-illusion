@@ -34,7 +34,7 @@ Speedup = 1 / [0.70 + 0.30/10] = 1 / 0.73 = 1.37x
 ## What This Tool Does
 
 ### 🧮 Timeline Estimator
-Plug in your baseline estimate, choose an AI adoption preset and spec quality level, then adjust per-phase AI multipliers. The **Spec Quality dial** (Poor / Good / Excellent) models how specification clarity affects downstream phases — poor specs can cut effective AI gains nearly in half, while excellent specs let AI reach its full potential. Switch between presets to present stakeholders with a range.
+Plug in your baseline estimate, choose an AI adoption preset, spec quality level, and AI maturity sprint, then adjust per-phase multipliers. The **Spec Quality dial** models how specification clarity affects downstream phases — poor specs can cut effective AI gains nearly in half. The **AI Maturity Ramp** models the team learning curve — Sprint 1 with AI tools often nets out near 1x; by Sprint 5 you reach full effectiveness. Switch between presets to present stakeholders with a range.
 
 ### 🔍 Factor Deep-Dive
 Explore each phase's AI impact, human bottleneck, and new risks introduced by AI tooling. Understand *why* each multiplier is what it is.

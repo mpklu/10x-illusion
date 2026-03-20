@@ -1,19 +1,23 @@
-import { PRESETS, SPEC_QUALITY_LEVELS } from "../data/presets";
+import { PRESETS, SPEC_QUALITY_LEVELS, AI_MATURITY_LEVELS } from "../data/presets";
 import SliderControl from "../components/SliderControl";
 import PhaseBar from "../components/PhaseBar";
 import SegmentedControl from "../components/SegmentedControl";
 
 const PRESET_OPTIONS = Object.entries(PRESETS).map(([key, val]) => ({ key, label: val.label, desc: val.desc }));
 const SPEC_OPTIONS = Object.entries(SPEC_QUALITY_LEVELS).map(([key, val]) => ({ key, label: val.label, desc: val.desc }));
-const SPEC_ACCENT = (v) => v === "poor" ? "var(--red)" : v === "excellent" ? "var(--green)" : "var(--accent)";
+const MATURITY_OPTIONS = Object.entries(AI_MATURITY_LEVELS).map(([key, val]) => ({ key, label: val.label, desc: val.desc }));
 
-export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, specQuality, setSpecQuality }) {
+const SPEC_ACCENT = (v) => v === "poor" ? "var(--red)" : v === "excellent" ? "var(--green)" : "var(--accent)";
+const MATURITY_ACCENT = (v) => v === "s1" ? "var(--red)" : v === "s2" ? "var(--amber)" : v === "s5" ? "var(--green)" : "var(--accent)";
+
+export default function EstimatorTab({ baselineDays, setBaselineDays, preset, applyPreset, calculations, phases, multipliers, updateMultiplier, setConfirmRemove, specQuality, setSpecQuality, aiMaturity, setAiMaturity }) {
   const calcByPhaseId = {};
   calculations.phases.forEach(cp => { calcByPhaseId[cp.id] = cp; });
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr 1fr", gap: 16, marginBottom: 24, alignItems: "start" }}>
+      {/* Row 1: Baseline, Preset, Spec Quality */}
+      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr 1fr", gap: 16, marginBottom: 12, alignItems: "start" }}>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Baseline (days)</label>
           <input type="number" value={baselineDays} onChange={(e) => setBaselineDays(Math.max(1, Number(e.target.value)))} style={{
@@ -29,6 +33,15 @@ export default function EstimatorTab({ baselineDays, setBaselineDays, preset, ap
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Spec Quality</label>
           <SegmentedControl options={SPEC_OPTIONS} value={specQuality} onChange={setSpecQuality} accentColor={SPEC_ACCENT} />
+        </div>
+      </div>
+
+      {/* Row 2: AI Maturity Ramp */}
+      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: 16, marginBottom: 24, alignItems: "start" }}>
+        <div />
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, display: "block", marginBottom: 6, fontFamily: "var(--font-mono)" }}>AI Maturity Ramp</label>
+          <SegmentedControl options={MATURITY_OPTIONS} value={aiMaturity} onChange={setAiMaturity} accentColor={MATURITY_ACCENT} />
         </div>
       </div>
 
@@ -69,7 +82,9 @@ export default function EstimatorTab({ baselineDays, setBaselineDays, preset, ap
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 24px" }}>
           {phases.map(p => {
             const cp = calcByPhaseId[p.id];
-            const hasModifier = cp && cp.phaseFactor !== 1.0;
+            const hasSpecMod = cp && cp.phaseFactor !== 1.0;
+            const hasMaturityMod = cp && cp.maturityScale < 1.0;
+            const hasAnyMod = hasSpecMod || hasMaturityMod;
             return (
               <div key={p.id}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
@@ -87,12 +102,20 @@ export default function EstimatorTab({ baselineDays, setBaselineDays, preset, ap
                   )}
                 </div>
                 <SliderControl phase={p} value={multipliers[p.id] || p.aiDefault} onChange={(v) => updateMultiplier(p.id, v)} />
-                {hasModifier && (
-                  <div style={{
-                    fontSize: 10, fontFamily: "var(--font-mono)", marginTop: 2,
-                    color: cp.phaseFactor < 1 ? "var(--red)" : "var(--green)",
-                  }}>
-                    spec {cp.phaseFactor < 1 ? "" : "+"}{((cp.phaseFactor - 1) * 100).toFixed(0)}% → effective {cp.effectiveMultiplier.toFixed(1)}x
+                {hasAnyMod && (
+                  <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", marginTop: 2, color: "var(--text-tertiary)" }}>
+                    {hasSpecMod && (
+                      <span style={{ color: cp.phaseFactor < 1 ? "var(--red)" : "var(--green)" }}>
+                        spec {cp.phaseFactor < 1 ? "" : "+"}{((cp.phaseFactor - 1) * 100).toFixed(0)}%
+                      </span>
+                    )}
+                    {hasSpecMod && hasMaturityMod && <span> · </span>}
+                    {hasMaturityMod && (
+                      <span style={{ color: "var(--amber)" }}>
+                        ramp {(cp.maturityScale * 100).toFixed(0)}%
+                      </span>
+                    )}
+                    <span> → effective {cp.effectiveMultiplier.toFixed(2)}x</span>
                   </div>
                 )}
               </div>
